@@ -1,0 +1,112 @@
+{
+  "obra": {
+    "nombre": "Reforma Yéchar",
+    "descripcion": "Reforma integral en Yéchar - Carpintería, ventanas y climatización"
+  },
+  "presupuestos": [
+    {
+      "id": "presu-1",
+      "proveedor": "JOFRANJE S.L",
+      "titulo": "Casa 1 - Fran Lara",
+      "referencia": "225.744/2",
+      "fecha": "2026-03-10",
+      "partidas": [
+        { "id": "p1-1", "descripcion": "Puerta Residencial Gaudí blanco 1000x2070", "importe": 898.00, "terminada": false },
+        { "id": "p1-2", "descripcion": "Cocina - Ventana 1 hoja 1095x850", "importe": 325.64, "terminada": false },
+        { "id": "p1-3", "descripcion": "Cocina - Fijo 800x800", "importe": 167.78, "terminada": false },
+        { "id": "p1-4", "descripcion": "Cocina - Corredera 2 hojas 2200x2200", "importe": 1933.57, "terminada": false },
+        { "id": "p1-5", "descripcion": "Mosquitera plisada 2 hojas", "importe": 517.00, "terminada": false }
+      ],
+      "total": 4648.81,
+      "baseImponible": 3841.99,
+      "iva": 806.82
+    },
+    {
+      "id": "presu-2",
+      "proveedor": "JOFRANJE S.L",
+      "titulo": "Casa 2 - Paco Lara",
+      "referencia": "225.745/1",
+      "fecha": "2026-02-22",
+      "partidas": [
+        { "id": "p2-1", "descripcion": "Puerta entrada + fijo lateral", "importe": 1248.00, "terminada": false },
+        { "id": "p2-2", "descripcion": "Cocina - Corredera 2 hojas 1185x850", "importe": 551.04, "terminada": false },
+        { "id": "p2-3", "descripcion": "Salón - Corredera 2 hojas 1800x2200", "importe": 1733.56, "terminada": false },
+        { "id": "p2-4", "descripcion": "Despacho - Ventana 2 hojas oscilobatiente 1200x814", "importe": 716.78, "terminada": false },
+        { "id": "p2-5", "descripcion": "Salón - Ventana 2 hojas oscilobatiente 1180x950", "importe": 757.65, "terminada": false },
+        { "id": "p2-6", "descripcion": "Habitación Derecha - Ventana 2 hojas 1000x1064", "importe": 746.88, "terminada": false },
+        { "id": "p2-7", "descripcion": "Habitación izquierda - Ventana 2 hojas 980x1064", "importe": 752.16, "terminada": false },
+        { "id": "p2-8", "descripcion": "Baño - Ventana 1 hoja abatible 1300x500", "importe": 317.97, "terminada": false },
+        { "id": "p2-9", "descripcion": "Mosquitera Plisada 2 hojas", "importe": 485.00, "terminada": false },
+        { "id": "p2-10", "descripcion": "Carpintería - Suministro y ajuste", "importe": 350.00, "terminada": false }
+      ],
+      "total": 9267.44,
+      "baseImponible": 7659.04,
+      "iva": 1608.40
+    },
+    {
+      "id": "presu-3",
+      "proveedor": "Antonio Moreno Aparicio / Construcciones Muleño CB",
+      "titulo": "Climatización - Aire acondicionado",
+      "referencia": "11/03/2026",
+      "fecha": "2026-03-11",
+      "partidas": [
+        { "id": "p3-1", "descripcion": "Preinstalación conductos 6 estancias + 16m cobre hasta azotea", "importe": 1540.00, "terminada": false },
+        { "id": "p3-2", "descripcion": "Suministro e instalación equipo Hisense 9030FGS módulo WiFi A++", "importe": 2380.00, "terminada": false }
+      ],
+      "total": 4198.81,
+      "baseImponible": 3920.00,
+      "iva": 823.20,
+      "nota": "Con descuento 5% aplicado"
+    },
+    {
+      "id": "presu-4",
+      "proveedor": "REFORMAS Y CONSTRUCCIONES MULEÑO C.B.",
+      "titulo": "Obra Final - Reforma vivienda planta baja",
+      "referencia": "12/03/2026",
+      "fecha": "2026-03-12",
+      "partidas": [
+        { "id": "p4-1", "descripcion": "Preparación para colocar dos puertas de entrada principal, ampliar y centrar huecos del pasillo", "importe": 1500, "terminada": false },
+        { "id": "p4-2", "descripcion": "Levantar tabique división viviendas, enlucido yeso, cierre hueco escalera con pladur", "importe": 2000, "terminada": false },
+        { "id": "p4-3", "descripcion": "Quitar azulejos baño, preparar paredes para alicatar medias paredes y yeso (galería)", "importe": 3800, "terminada": false },
+        { "id": "p4-4", "descripcion": "Colocación de todas las ventanas de la vivienda", "importe": 500, "terminada": false },
+        { "id": "p4-5", "descripcion": "Demolición cocina de leña y armarios, preparar para estufa pellet y puerta a zona piscina", "importe": 2400, "terminada": false },
+        { "id": "p4-6", "descripcion": "Colocación catavi en suelo, hormigón anticongelante para pavimento y roda-pie", "importe": 9000, "terminada": false },
+        { "id": "p4-7", "descripcion": "Nuevo baño: tabique, armazón puerta corredera, alicatado, pie de ducha", "importe": 5150, "terminada": false },
+        { "id": "p4-8", "descripcion": "Pladur en habitaciones para humedad (incl. rejilla respiración)", "importe": 1500, "terminada": false },
+        { "id": "p4-9", "descripcion": "Rozas fontanería y electricidad, tapado", "importe": 1300, "terminada": false },
+        { "id": "p4-10", "descripcion": "Retejado de tejados, colocación y reposición de tejas", "importe": 1000, "terminada": false },
+        { "id": "p4-11", "descripcion": "Vivienda 2: Pladur con pendiente tejado, hueco puerta comedor, acceso cocina", "importe": 1950, "terminada": false },
+        { "id": "p4-12", "descripcion": "Cocina: quitar azulejos, alicatar medias paredes, caviti, mallado, hormigón, autonivelante", "importe": 3600, "terminada": false },
+        { "id": "p4-13", "descripcion": "Hormigón con mallado parte trasera aprox. 5x7 m", "importe": 2870, "terminada": false }
+      ],
+      "total": 36570,
+      "baseImponible": 36570,
+      "iva": 0,
+      "nota": "Presupuesto sin IVA. No incluye puertas, ventanas, azulejos ni pavimento"
+    },
+    {
+      "id": "presu-5",
+      "proveedor": "S.P.G Instalaciones",
+      "titulo": "Instalación eléctrica y telecomunicaciones",
+      "referencia": "00009",
+      "fecha": "2026-01-10",
+      "partidas": [
+        { "id": "p5-1", "descripcion": "Cuadro automáticos Hager 36 módulos + acometida 3x25mm2", "importe": 686.8, "iva": 21, "terminada": false },
+        { "id": "p5-2", "descripcion": "Cocina: enchufes, interruptor, horno, vitro, lavadora, TV, red, luz, downlights", "importe": 759.8, "iva": 21, "terminada": false },
+        { "id": "p5-3", "descripcion": "Recibidor: enchufes, conmutador, interruptor, luz, downlights", "importe": 141, "iva": 21, "terminada": false },
+        { "id": "p5-4", "descripcion": "Comedor: enchufes, conmutadores, cruce, TV, red, luz, downlights", "importe": 1025.4, "iva": 21, "terminada": false },
+        { "id": "p5-5", "descripcion": "Lavadero: enchufes, lavadora, interruptor, luz, downlights", "importe": 320.5, "iva": 21, "terminada": false },
+        { "id": "p5-6", "descripcion": "Habitación matrimonio: enchufes, cruce, TV, red, luz, downlights", "importe": 396.3, "iva": 21, "terminada": false },
+        { "id": "p5-7", "descripcion": "Habitación 2: enchufes, red, TV, conmutadores, luz, downlights", "importe": 598.8, "iva": 21, "terminada": false },
+        { "id": "p5-8", "descripcion": "Distribuidor: conmutadores, enchufe, luz, downlight", "importe": 112, "iva": 21, "terminada": false },
+        { "id": "p5-9", "descripcion": "Aseo: enchufes, interruptores, luz, downlights", "importe": 186, "iva": 21, "terminada": false },
+        { "id": "p5-10", "descripcion": "Exteriores: puntos luz, enchufes estancos", "importe": 271, "iva": 21, "terminada": false }
+      ],
+      "total": 5443.79,
+      "baseImponible": 4499,
+      "iva": 944.79,
+      "nota": "IVA 21% incluido. No incluye entrada ni cocina existente"
+    }
+  ],
+  "pagos": []
+}

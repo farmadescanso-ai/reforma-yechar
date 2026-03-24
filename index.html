@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Control Reforma Yéchar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf7f4;
+      --surface: #ffffff;
+      --surface-elevated: #ffffff;
+      --border: rgba(139, 90, 43, 0.15);
+      --text: #2c2419;
+      --text-dim: #6b5d4f;
+      --accent-terracotta: #c2410c;
+      --accent-terracotta-dim: rgba(194, 65, 12, 0.12);
+      --accent-sage: #4d7c3a;
+      --accent-sage-dim: rgba(77, 124, 58, 0.12);
+      --accent-amber: #b45309;
+      --accent-amber-dim: rgba(180, 83, 9, 0.12);
+      --success: #15803d;
+      --success-dim: rgba(21, 128, 61, 0.12);
+      --danger: #b91c1c;
+      --danger-dim: rgba(185, 28, 28, 0.12);
+      --font-body: 'Bricolage Grotesque', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 2px 8px rgba(44, 36, 25, 0.06);
+      --shadow-lg: 0 8px 24px rgba(44, 36, 25, 0.1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1714;
+        --surface: #252119;
+        --surface-elevated: #2d281f;
+        --border: rgba(255, 235, 205, 0.08);
+        --text: #f5ede3;
+        --text-dim: #a89a8a;
+        --accent-terracotta: #f97316;
+        --accent-terracotta-dim: rgba(249, 115, 22, 0.15);
+        --accent-sage: #65a30d;
+        --accent-sage-dim: rgba(101, 163, 13, 0.15);
+        --accent-amber: #f59e0b;
+        --accent-amber-dim: rgba(245, 158, 11, 0.15);
+        --success: #22c55e;
+        --success-dim: rgba(34, 197, 94, 0.15);
+        --danger: #ef4444;
+        --danger-dim: rgba(239, 68, 68, 0.15);
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-terracotta-dim), transparent),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg) 100%);
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+
+    /* Header */
+    header {
+      padding: 2rem 0 1.5rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    header p {
+      margin-top: 0.25rem;
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+
+    /* KPI Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .kpi-card--hero {
+      background: linear-gradient(135deg, var(--accent-terracotta-dim), var(--accent-sage-dim));
+      border-color: var(--accent-terracotta);
+    }
+    .kpi-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+      margin-bottom: 0.25rem;
+    }
+    .kpi-value {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .kpi-card--hero .kpi-value { font-size: 1.75rem; color: var(--accent-terracotta); }
+
+    /* Progress bar */
+    .progress-wrap {
+      margin: 2rem 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    .progress-wrap h3 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--text-dim);
+    }
+    .progress-bar {
+      height: 12px;
+      background: var(--accent-sage-dim);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-sage), var(--accent-terracotta));
+      border-radius: 6px;
+      transition: width 0.4s ease;
+    }
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      transition: all 0.2s;
+    }
+    .tab:hover { color: var(--text); border-color: var(--accent-terracotta); }
+    .tab.active {
+      background: var(--accent-terracotta);
+      color: white;
+      border-color: var(--accent-terracotta);
+    }
+
+    /* Sections */
+    .section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .card-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* Partida rows */
+    .partida {
+      display: grid;
+      grid-template-columns: 24px 1fr auto 70px;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    @media (max-width: 600px) {
+      .partida { grid-template-columns: 24px 1fr; gap: 0.5rem; }
+      .partida-importe-cell { grid-column: 2; }
+      .partida-iva-cell { grid-column: 2; }
+    }
+    .partida:last-child { border-bottom: none; }
+    .partida:hover { background: var(--accent-terracotta-dim); }
+    .partida.terminada { opacity: 0.7; }
+    .partida.terminada .partida-desc { text-decoration: line-through; color: var(--text-dim); }
+    .partida-check {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .partida-check:hover { border-color: var(--accent-sage); }
+    .partida.terminada .partida-check {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+    .partida.terminada .partida-check::after { content: '✓'; font-size: 0.85rem; font-weight: bold; }
+    .partida-desc { font-size: 0.95rem; min-width: 0; }
+    .partida-importe {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--text);
+    }
+    .partida-iva-cell { display: flex; flex-direction: column; align-items: flex-end; gap: 0.15rem; }
+
+    /* Forms */
+    .form-grid {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.35rem;
+      color: var(--text-dim);
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.6rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-terracotta);
+      box-shadow: 0 0 0 3px var(--accent-terracotta-dim);
+    }
+    .btn {
+      padding: 0.65rem 1.25rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--accent-terracotta);
+      color: white;
+    }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent-terracotta); color: var(--accent-terracotta); }
+    .btn-success { background: var(--accent-sage); color: white; }
+    .btn-success:hover { filter: brightness(1.1); }
+
+    /* Payments list */
+    .pago-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pago-item:last-child { border-bottom: none; }
+    .pago-info { font-size: 0.95rem; }
+    .pago-concepto { font-weight: 500; }
+    .pago-fecha { font-size: 0.8rem; color: var(--text-dim); margin-top: 0.2rem; }
+    .pago-importe { font-family: var(--font-mono); font-weight: 600; color: var(--accent-sage); }
+
+    /* Add budget form */
+    .add-budget-form .form-grid { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 600px) { .add-budget-form .form-grid { grid-template-columns: 1fr; } }
+
+    /* Partidas container for new budget */
+    .partidas-editor { margin-top: 1rem; }
+    .partida-editor-row {
+      display: grid;
+      grid-template-columns: 70px 1fr 100px 70px auto;
+      gap: 0.75rem;
+      align-items: end;
+      margin-bottom: 0.75rem;
+    }
+    @media (max-width: 600px) {
+      .partida-editor-row { grid-template-columns: 1fr auto; }
+      .partida-editor-row .form-group { grid-column: 1 / -1; }
+    }
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      background: var(--danger-dim);
+      color: var(--danger);
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    .btn-icon:hover { filter: brightness(1.2); }
+    .btn-add-partida {
+      margin-top: 0.5rem;
+      background: var(--accent-sage-dim);
+      color: var(--accent-sage);
+      border: 1px dashed var(--accent-sage);
+    }
+    .btn-add-partida:hover { background: var(--accent-sage); color: white; border-style: solid; }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: var(--text-dim);
+    }
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border-radius: 4px;
+      background: var(--accent-sage-dim);
+      color: var(--accent-sage);
+    }
+    .badge--terracotta { background: var(--accent-terracotta-dim); color: var(--accent-terracotta); }
+
+    /* Provider section */
+    .provider-section { margin-bottom: 2rem; }
+    .provider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      background: linear-gradient(135deg, var(--accent-terracotta-dim), var(--accent-sage-dim));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+    }
+    .provider-header h3 { font-size: 1.1rem; font-weight: 600; }
+    .provider-codigo { font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-dim); }
+    .partida-ref { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim); margin-right: 0.5rem; }
+    .provider-total { font-family: var(--font-mono); font-size: 1.25rem; font-weight: 600; color: var(--accent-terracotta); }
+    .provider-resumen {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+    .provider-resumen span { font-family: var(--font-mono); }
+    .provider-entregas { color: var(--accent-sage); }
+    .provider-restante { color: var(--accent-amber); font-weight: 500; }
+    .presu-resumen {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .presu-resumen span { font-family: var(--font-mono); }
+    .presu-pagado { color: var(--accent-sage); }
+    .presu-restante { color: var(--accent-amber); font-weight: 500; }
+    .presu-card { margin-bottom: 1rem; }
+    .presu-card:last-child { margin-bottom: 0; }
+    .partidas-total {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0 1rem;
+      padding: 0.75rem 1rem;
+      border-top: 2px solid var(--border);
+      margin-top: 0.5rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .partidas-realizadas { color: var(--accent-sage); }
+    .partida-iva-input {
+      width: 52px;
+      padding: 0.25rem 0.4rem;
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--text);
+      text-align: right;
+    }
+    .partida-iva-input:focus {
+      outline: none;
+      border-color: var(--accent-terracotta);
+    }
+    .partida-total-iva {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .pago-item { position: relative; }
+    .pago-edit {
+      margin-left: 0.5rem;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.75rem;
+      background: var(--accent-terracotta-dim);
+      color: var(--accent-terracotta);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .pago-edit:hover { filter: brightness(1.1); }
+    .pago-importe-editable { display: flex; align-items: center; gap: 0.5rem; }
+    .pago-importe-editable input {
+      width: 90px;
+      padding: 0.3rem 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      border: 1px solid var(--accent-terracotta);
+      border-radius: 4px;
+    }
+    .pago-tipo-radio { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .pago-tipo-radio label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+    .pago-vinculo { font-size: 0.85rem; color: var(--text-dim); }
+    .pago-edit-form {
+      padding: 1rem;
+      background: var(--accent-terracotta-dim);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .pago-edit-form .form-group { margin-bottom: 0; }
+    .pago-edit-form .form-group label { font-size: 0.8rem; }
+    @media (max-width: 600px) {
+      .datos-actions { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Reforma Yéchar</h1>
+      <p>Panel de control de presupuesto y evolución de la obra</p>
+    </header>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi-card kpi-card--hero">
+        <div class="kpi-label">Presupuesto total (Base Imponible)</div>
+        <div class="kpi-value" id="kpi-total">0 €</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pagado</div>
+        <div class="kpi-value" id="kpi-pagado">0 €</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pendiente</div>
+        <div class="kpi-value" id="kpi-pendiente">0 €</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Partidas terminadas</div>
+        <div class="kpi-value" id="kpi-terminadas">0 / 0</div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <h3>Avance de la obra</h3>
+      <div class="progress-bar">
+        <div class="progress-bar-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="progress-stats">
+        <span id="progress-text">0% completado</span>
+        <span id="progress-partidas">0 partidas terminadas</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-tab="partidas">Partidas y presupuestos</button>
+      <button class="tab" data-tab="pagos">Pagos a cuenta</button>
+      <button class="tab" data-tab="nuevo-presu">Añadir presupuesto</button>
+      <button class="tab" data-tab="nuevo-pago">Registrar pago</button>
+      <button class="tab" data-tab="datos">Guardar / Restaurar</button>
+    </div>
+
+    <!-- Section: Partidas -->
+    <section class="section active" id="section-partidas">
+      <div id="partidas-container"></div>
+    </section>
+
+    <!-- Section: Pagos -->
+    <section class="section" id="section-pagos">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Historial de pagos</div>
+            <div class="card-subtitle">Dinero abonado y concepto</div>
+          </div>
+        </div>
+        <div id="pagos-container"></div>
+      </div>
+    </section>
+
+    <!-- Section: Nuevo presupuesto -->
+    <section class="section" id="section-nuevo-presu">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Añadir nuevo presupuesto</div>
+        </div>
+        <form id="form-nuevo-presu" class="add-budget-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Código proveedor</label>
+              <input type="text" name="codigoProveedor" placeholder="Ej: JOFR" maxlength="8" title="Código corto del proveedor">
+            </div>
+            <div class="form-group">
+              <label>Proveedor</label>
+              <input type="text" name="proveedor" placeholder="Ej: JOFRANJE S.L" required>
+            </div>
+            <div class="form-group">
+              <label>Título / Descripción</label>
+              <input type="text" name="titulo" placeholder="Ej: Carpintería Casa 1" required>
+            </div>
+            <div class="form-group">
+              <label>Referencia</label>
+              <input type="text" name="referencia" placeholder="Ej: 225.744/2">
+            </div>
+            <div class="form-group">
+              <label>Fecha</label>
+              <input type="date" name="fecha" id="fecha-presu" required>
+            </div>
+          </div>
+          <div class="partidas-editor" style="margin-top: 1.5rem;">
+            <h4 style="margin-bottom: 0.75rem; font-size: 0.95rem;">Partidas (importes en Base Imponible)</h4>
+            <div id="partidas-editor-container"></div>
+            <button type="button" class="btn btn-add-partida" id="btn-add-partida">+ Añadir partida</button>
+          </div>
+          <div style="margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary">Guardar presupuesto</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Section: Guardar / Restaurar -->
+    <section class="section" id="section-datos">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Guardar y restaurar datos</div>
+          <div class="card-subtitle">Exporta o importa presupuestos, pagos y estado de partidas</div>
+        </div>
+        <div class="form-grid datos-actions" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <p style="margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.9rem;">Descarga un archivo JSON con todos los datos (presupuestos, partidas terminadas, pagos). Guárdalo en un lugar seguro.</p>
+            <button type="button" class="btn btn-primary" id="btn-exportar">Exportar datos</button>
+          </div>
+          <div>
+            <p style="margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.9rem;">Restaura desde un archivo JSON exportado previamente. Sustituye los datos actuales.</p>
+            <label class="btn btn-secondary" style="display: inline-block; cursor: pointer;">
+              Importar datos
+              <input type="file" id="input-importar" accept=".json,application/json" style="display: none;">
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section: Nuevo pago -->
+    <section class="section" id="section-nuevo-pago">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Registrar pago</div>
+          <div class="card-subtitle">Vincula el pago a una partida o a cuenta de un proveedor</div>
+        </div>
+        <form id="form-nuevo-pago">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Importe (€) — Base Imponible</label>
+              <input type="number" name="importe" step="0.01" min="0" placeholder="0,00" required>
+            </div>
+            <div class="form-group">
+              <label>Fecha del pago</label>
+              <input type="date" name="fecha" id="fecha-pago" required>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>Tipo de vinculación</label>
+              <div class="pago-tipo-radio">
+                <label><input type="radio" name="pago_tipo" value="partida" checked> A partida específica</label>
+                <label><input type="radio" name="pago_tipo" value="proveedor"> A cuenta de proveedor</label>
+              </div>
+            </div>
+            <div class="form-group pago-vinculo-partida" style="grid-column: 1 / -1;">
+              <label>Partida</label>
+              <select name="partida_vinculo" id="partida-vinculo" required>
+                <option value="">— Seleccionar partida —</option>
+              </select>
+            </div>
+            <div class="form-group pago-vinculo-proveedor" style="grid-column: 1 / -1; display: none;">
+              <label>Proveedor</label>
+              <select name="proveedor_vinculo" id="proveedor-vinculo">
+                <option value="">— Seleccionar proveedor —</option>
+              </select>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>Concepto (opcional)</label>
+              <input type="text" name="concepto" placeholder="Ej: Anticipo, factura nº...">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success" style="margin-top: 0.5rem;">Registrar pago</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script type="application/json" id="initial-data">
+  {"obra":{"nombre":"Reforma Yéchar","descripcion":"Reforma integral en Yéchar - Carpintería, ventanas, climatización y obra"},"presupuestos":[{"id":"presu-1","proveedor":"JOFRANJE S.L","titulo":"Casa 1 - Fran Lara","referencia":"225.744/2","fecha":"2026-03-10","partidas":[{"id":"p1-1","descripcion":"Puerta Residencial Gaudí blanco 1000x2070","importe":898,"terminada":false},{"id":"p1-2","descripcion":"Cocina - Ventana 1 hoja 1095x850","importe":325.64,"terminada":false},{"id":"p1-3","descripcion":"Cocina - Fijo 800x800","importe":167.78,"terminada":false},{"id":"p1-4","descripcion":"Cocina - Corredera 2 hojas 2200x2200","importe":1933.57,"terminada":false},{"id":"p1-5","descripcion":"Mosquitera plisada 2 hojas","importe":517,"terminada":false}],"total":4648.81,"baseImponible":3841.99,"iva":806.82},{"id":"presu-2","proveedor":"JOFRANJE S.L","titulo":"Casa 2 - Paco Lara","referencia":"225.745/1","fecha":"2026-02-22","partidas":[{"id":"p2-1","descripcion":"Puerta entrada + fijo lateral","importe":1248,"terminada":false},{"id":"p2-2","descripcion":"Cocina - Corredera 2 hojas 1185x850","importe":551.04,"terminada":false},{"id":"p2-3","descripcion":"Salón - Corredera 2 hojas 1800x2200","importe":1733.56,"terminada":false},{"id":"p2-4","descripcion":"Despacho - Ventana 2 hojas oscilobatiente 1200x814","importe":716.78,"terminada":false},{"id":"p2-5","descripcion":"Salón - Ventana 2 hojas oscilobatiente 1180x950","importe":757.65,"terminada":false},{"id":"p2-6","descripcion":"Habitación Derecha - Ventana 2 hojas 1000x1064","importe":746.88,"terminada":false},{"id":"p2-7","descripcion":"Habitación izquierda - Ventana 2 hojas 980x1064","importe":752.16,"terminada":false},{"id":"p2-8","descripcion":"Baño - Ventana 1 hoja abatible 1300x500","importe":317.97,"terminada":false},{"id":"p2-9","descripcion":"Mosquitera Plisada 2 hojas","importe":485,"terminada":false},{"id":"p2-10","descripcion":"Carpintería - Suministro y ajuste","importe":350,"terminada":false}],"total":9267.44,"baseImponible":7659.04,"iva":1608.4},{"id":"presu-3","proveedor":"Antonio Moreno Aparicio / Construcciones Muleño CB","titulo":"Climatización - Aire acondicionado","referencia":"11/03/2026","fecha":"2026-03-11","partidas":[{"id":"p3-1","descripcion":"Preinstalación conductos 6 estancias + 16m cobre hasta azotea","importe":1540,"terminada":false},{"id":"p3-2","descripcion":"Suministro e instalación equipo Hisense 9030FGS módulo WiFi A++","importe":2380,"terminada":false}],"total":4198.81,"baseImponible":3920,"iva":823.2,"nota":"Con descuento 5% aplicado"},{"id":"presu-4","proveedor":"REFORMAS Y CONSTRUCCIONES MULEÑO C.B.","titulo":"Obra Final - Reforma vivienda planta baja","referencia":"12/03/2026","fecha":"2026-03-12","partidas":[{"id":"p4-1","descripcion":"Preparación para colocar dos puertas de entrada principal, ampliar y centrar huecos del pasillo","importe":1500,"terminada":false},{"id":"p4-2","descripcion":"Levantar tabique división viviendas, enlucido yeso, cierre hueco escalera con pladur","importe":2000,"terminada":false},{"id":"p4-3","descripcion":"Quitar azulejos baño, preparar paredes para alicatar medias paredes y yeso (galería)","importe":3800,"terminada":false},{"id":"p4-4","descripcion":"Colocación de todas las ventanas de la vivienda","importe":500,"terminada":false},{"id":"p4-5","descripcion":"Demolición cocina de leña y armarios, preparar para estufa pellet y puerta a zona piscina","importe":2400,"terminada":false},{"id":"p4-6","descripcion":"Colocación catavi en suelo, hormigón anticongelante para pavimento y roda-pie","importe":9000,"terminada":false},{"id":"p4-7","descripcion":"Nuevo baño: tabique, armazón puerta corredera, alicatado, pie de ducha","importe":5150,"terminada":false},{"id":"p4-8","descripcion":"Pladur en habitaciones para humedad (incl. rejilla respiración)","importe":1500,"terminada":false},{"id":"p4-9","descripcion":"Rozas fontanería y electricidad, tapado","importe":1300,"terminada":false},{"id":"p4-10","descripcion":"Retejado de tejados, colocación y reposición de tejas","importe":1000,"terminada":false},{"id":"p4-11","descripcion":"Vivienda 2: Pladur con pendiente tejado, hueco puerta comedor, acceso cocina","importe":1950,"terminada":false},{"id":"p4-12","descripcion":"Cocina: quitar azulejos, alicatar medias paredes, caviti, mallado, hormigón, autonivelante","importe":3600,"terminada":false},{"id":"p4-13","descripcion":"Hormigón con mallado parte trasera aprox. 5x7 m","importe":2870,"terminada":false}],"total":36570,"baseImponible":36570,"iva":0,"nota":"Presupuesto sin IVA. No incluye puertas, ventanas, azulejos ni pavimento"},{"id":"presu-5","proveedor":"S.P.G Instalaciones","titulo":"Instalación eléctrica y telecomunicaciones","referencia":"00009","fecha":"2026-01-10","partidas":[{"id":"p5-1","descripcion":"Cuadro automáticos Hager 36 módulos + acometida 3x25mm2","importe":686.8,"iva":21,"terminada":false},{"id":"p5-2","descripcion":"Cocina: enchufes, interruptor, horno, vitro, lavadora, TV, red, luz, downlights","importe":759.8,"iva":21,"terminada":false},{"id":"p5-3","descripcion":"Recibidor: enchufes, conmutador, interruptor, luz, downlights","importe":141,"iva":21,"terminada":false},{"id":"p5-4","descripcion":"Comedor: enchufes, conmutadores, cruce, TV, red, luz, downlights","importe":1025.4,"iva":21,"terminada":false},{"id":"p5-5","descripcion":"Lavadero: enchufes, lavadora, interruptor, luz, downlights","importe":320.5,"iva":21,"terminada":false},{"id":"p5-6","descripcion":"Habitación matrimonio: enchufes, cruce, TV, red, luz, downlights","importe":396.3,"iva":21,"terminada":false},{"id":"p5-7","descripcion":"Habitación 2: enchufes, red, TV, conmutadores, luz, downlights","importe":598.8,"iva":21,"terminada":false},{"id":"p5-8","descripcion":"Distribuidor: conmutadores, enchufe, luz, downlight","importe":112,"iva":21,"terminada":false},{"id":"p5-9","descripcion":"Aseo: enchufes, interruptores, luz, downlights","importe":186,"iva":21,"terminada":false},{"id":"p5-10","descripcion":"Exteriores: puntos luz, enchufes estancos","importe":271,"iva":21,"terminada":false}],"total":5443.79,"baseImponible":4499,"iva":944.79,"nota":"IVA 21% incluido. No incluye entrada ni cocina existente"},{"id":"presu-6","codigoProveedor":"EDFA","proveedor":"ELECTRODOMESTICOS FAUSTO, S.L.","titulo":"Electrodomésticos cocina Casa 1 (Fran)","referencia":"00001530","fecha":"2026-03-17","partidas":[{"id":"p6-1","descripcion":"Horno Balay 3HB5131N3, cristal negro","importe":289.26,"iva":21,"terminada":false},{"id":"p6-2","descripcion":"Micro Balay 3CG5172N2, cristal negro","importe":206.61,"iva":21,"terminada":false},{"id":"p6-3","descripcion":"Frigo Bosch KGN39LBCF, cristal negro, 203x60 cm","importe":785.12,"iva":21,"terminada":false},{"id":"p6-4","descripcion":"Encimera Balay 3EBC989MH","importe":826.45,"iva":21,"terminada":false},{"id":"p6-5","descripcion":"A/A TCL S12F2S2 + promoción placa con extractor","importe":413.22,"iva":21,"terminada":false}],"baseImponible":2520.66,"total":3050,"iva":529.34},{"id":"presu-7","codigoProveedor":"EDFA","proveedor":"ELECTRODOMESTICOS FAUSTO, S.L.","titulo":"Electrodomésticos cocina Casa 2 (Paco)","referencia":"00001531","fecha":"2026-03-17","partidas":[{"id":"p7-1","descripcion":"Horno Balay 3HB5131B3, cristal blanco","importe":289.26,"iva":21,"terminada":false},{"id":"p7-2","descripcion":"Micro Balay 3CG5172B2, cristal blanco","importe":206.61,"iva":21,"terminada":false},{"id":"p7-3","descripcion":"Encimera Balay 3EBC989MH inducción mate extractor integrado","importe":1157.02,"iva":21,"terminada":false}],"baseImponible":1652.89,"total":2000,"iva":347.11}],"pagos":[{"id":"pago-jofr-20260318","importe":1500,"fecha":"2026-03-18","concepto":"Entrega a cuenta","tipo":"proveedor","codigoProveedor":"JOFR"},{"id":"pago-rcmu-20260320","importe":3000,"fecha":"2026-03-20","concepto":"Anticipo obra","tipo":"proveedor","codigoProveedor":"RCMU"},{"id":"pago-edfa-20260321","importe":500,"fecha":"2026-03-21","concepto":"Señal electrodomésticos","tipo":"proveedor","codigoProveedor":"EDFA"}]}
+  </script>
+
+  <script>
+    const STORAGE_KEY = 'reforma-yechar-data';
+
+    const CODIGO_PROVEEDOR = {
+      'JOFRANJE S.L': 'JOFR',
+      'Antonio Moreno Aparicio / Construcciones Muleño CB': 'AMOR',
+      'REFORMAS Y CONSTRUCCIONES MULEÑO C.B.': 'RCMU',
+      'S.P.G Instalaciones': 'SPGI',
+      'ELECTRODOMESTICOS FAUSTO, S.L.': 'EDFA'
+    };
+
+    function migrateData(data) {
+      if (!data || typeof data !== 'object') data = {};
+      if (!Array.isArray(data.presupuestos)) data.presupuestos = [];
+      if (!Array.isArray(data.pagos)) data.pagos = [];
+      data.presupuestos.forEach(p => {
+        if (!p.codigoProveedor) p.codigoProveedor = CODIGO_PROVEEDOR[p.proveedor] || p.proveedor.slice(0, 4).toUpperCase();
+        if (!Array.isArray(p.partidas)) p.partidas = [];
+        p.partidas.forEach(pa => {
+          if (!pa.referencia) pa.referencia = pa.id ? pa.id.toUpperCase() : '';
+          if (typeof pa.importe !== 'number') pa.importe = parseFloat(pa.importe) || 0;
+          if (typeof pa.terminada !== 'boolean') pa.terminada = false;
+        });
+      });
+      data.pagos.forEach(p => {
+        if (typeof p.importe !== 'number') p.importe = parseFloat(p.importe) || 0;
+        if (!p.tipo) p.tipo = 'proveedor';
+        if (!p.codigoProveedor && p.concepto) p.codigoProveedor = '';
+      });
+      return data;
+    }
+
+    function loadData() {
+      const initial = JSON.parse(document.getElementById('initial-data').textContent);
+      migrateData(initial);
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const data = JSON.parse(stored);
+          migrateData(data);
+          ['presu-4', 'presu-5', 'presu-6', 'presu-7'].forEach(id => {
+            if (!data.presupuestos.some(p => p.id === id)) {
+              const p = initial.presupuestos.find(x => x.id === id);
+              if (p) data.presupuestos.push(p);
+            }
+          });
+          return data;
+        } catch (e) {
+          console.warn('Error parsing stored data', e);
+        }
+      }
+      return initial;
+    }
+
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function formatEuro(n) {
+      const num = Number(n);
+      return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        useGrouping: true
+      }).format(num);
+    }
+
+    function formatDate(s) {
+      if (!s) return '-';
+      const d = new Date(s);
+      return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function uid() {
+      return 'id-' + Date.now() + '-' + Math.random().toString(36).slice(2, 9);
+    }
+
+    let data = loadData();
+
+    function togglePartida(presuId, partidaId) {
+      const presu = data.presupuestos.find(p => p.id === presuId);
+      if (!presu) return;
+      const partida = presu.partidas.find(pa => pa.id === partidaId);
+      if (!partida) return;
+      partida.terminada = !partida.terminada;
+      saveData(data);
+      render();
+    }
+
+    function updatePartidaIva(presuId, partidaId, iva) {
+      const presu = data.presupuestos.find(p => p.id === presuId);
+      if (!presu) return;
+      const partida = presu.partidas.find(pa => pa.id === partidaId);
+      if (!partida) return;
+      partida.iva = iva > 0 ? Math.round(iva * 100) / 100 : 0;
+      saveData(data);
+      render();
+    }
+
+    function getBaseImponiblePresu(p) {
+      return p.baseImponible ?? p.partidas.reduce((s, pa) => s + pa.importe, 0);
+    }
+
+    function getPagadoPartidaPorPresupuesto(presuId) {
+      return data.pagos.reduce((s, p) => {
+        if (p.tipo === 'partida' && p.presuId === presuId) return s + (parseFloat(p.importe) || 0);
+        return s;
+      }, 0);
+    }
+
+    function getEntregasProveedorPorCodigo(codigoProveedor) {
+      if (!codigoProveedor) return 0;
+      return data.pagos.reduce((s, p) => {
+        if (p.tipo === 'proveedor' && p.codigoProveedor === codigoProveedor) return s + (parseFloat(p.importe) || 0);
+        return s;
+      }, 0);
+    }
+
+    function getPagadoMostradoPresupuesto(presu, presupuestosProveedor) {
+      const pagadoPartida = getPagadoPartidaPorPresupuesto(presu.id);
+      const codigo = presu.codigoProveedor || CODIGO_PROVEEDOR[presu.proveedor] || '';
+      const entregasProveedor = getEntregasProveedorPorCodigo(codigo);
+      if (!entregasProveedor) return pagadoPartida;
+
+      const totalProveedor = presupuestosProveedor.reduce((s, p) => s + getBaseImponiblePresu(p), 0);
+      const biPresu = getBaseImponiblePresu(presu);
+      const proporcion = totalProveedor > 0 ? (biPresu / totalProveedor) : 0;
+      const cuotaEntrega = entregasProveedor * proporcion;
+      return pagadoPartida + cuotaEntrega;
+    }
+
+    function renderKPIs() {
+      const totalPresu = data.presupuestos.reduce((s, p) => s + getBaseImponiblePresu(p), 0);
+      const totalPagado = data.pagos.reduce((s, p) => s + (parseFloat(p.importe) || 0), 0);
+      const pendiente = totalPresu - totalPagado;
+      const totalPartidas = data.presupuestos.reduce((s, p) => s + p.partidas.length, 0);
+      const terminadas = data.presupuestos.reduce((s, p) => 
+        s + p.partidas.filter(pa => pa.terminada).length, 0);
+      const totalImportePartidas = data.presupuestos.reduce((s, p) =>
+        s + p.partidas.reduce((sp, pa) => sp + (pa.importe || 0), 0), 0);
+      const importeRealizado = data.presupuestos.reduce((s, p) =>
+        s + p.partidas.filter(pa => pa.terminada).reduce((sp, pa) => sp + (pa.importe || 0), 0), 0);
+      const pct = totalImportePartidas ? Math.round((importeRealizado / totalImportePartidas) * 100) : 0;
+
+      document.getElementById('kpi-total').textContent = formatEuro(totalPresu);
+      document.getElementById('kpi-pagado').textContent = formatEuro(totalPagado);
+      document.getElementById('kpi-pendiente').textContent = formatEuro(pendiente);
+      document.getElementById('kpi-terminadas').textContent = `${terminadas} / ${totalPartidas}`;
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-text').textContent = pct + '% completado (por importe)';
+      document.getElementById('progress-partidas').textContent = `${terminadas} partidas terminadas · ${formatEuro(importeRealizado)} realizadas`;
+    }
+
+    const PROVEEDOR_ORDEN = [
+      'REFORMAS Y CONSTRUCCIONES MULEÑO C.B.',
+      'JOFRANJE S.L',
+      'Antonio Moreno Aparicio / Construcciones Muleño CB',
+      'S.P.G Instalaciones',
+      'ELECTRODOMESTICOS FAUSTO, S.L.'
+    ];
+
+    function getProveedorOrden(proveedor) {
+      const idx = PROVEEDOR_ORDEN.findIndex(p => proveedor.toUpperCase().includes(p.toUpperCase()));
+      return idx >= 0 ? idx : 999;
+    }
+
+    function renderPartidas() {
+      const container = document.getElementById('partidas-container');
+      container.innerHTML = '';
+      const porProveedor = {};
+      data.presupuestos.forEach(presu => {
+        const prov = presu.proveedor;
+        if (!porProveedor[prov]) porProveedor[prov] = [];
+        porProveedor[prov].push(presu);
+      });
+      const proveedores = Object.keys(porProveedor).sort((a, b) => {
+        const oa = getProveedorOrden(a), ob = getProveedorOrden(b);
+        return oa !== ob ? oa - ob : a.localeCompare(b);
+      });
+      proveedores.forEach(proveedor => {
+        const presupuestos = porProveedor[proveedor];
+        const totalProveedor = presupuestos.reduce((s, p) => s + getBaseImponiblePresu(p), 0);
+        const codigo = presupuestos[0]?.codigoProveedor || CODIGO_PROVEEDOR[proveedor] || '';
+        const presuIds = new Set(presupuestos.map(p => p.id));
+        const entregasACuenta = data.pagos.reduce((s, p) => {
+          const imp = parseFloat(p.importe) || 0;
+          if (p.tipo === 'partida' && p.presuId && presuIds.has(p.presuId)) return s + imp;
+          if (p.tipo === 'proveedor' && p.codigoProveedor === codigo) return s + imp;
+          return s;
+        }, 0);
+        const restante = Math.max(0, totalProveedor - entregasACuenta);
+        const section = document.createElement('div');
+        section.className = 'provider-section';
+        section.innerHTML = `
+          <div class="provider-header">
+            <div>
+              <h3>${codigo ? `<span class="provider-codigo">[${codigo}]</span> ` : ''}${proveedor}</h3>
+              <div class="provider-resumen">
+                <span class="provider-total">Total: ${formatEuro(totalProveedor)}</span>
+                <span class="provider-entregas">Pagado: ${formatEuro(entregasACuenta)}</span>
+                <span class="provider-restante">Restante: ${formatEuro(restante)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        presupuestos.forEach(presu => {
+          const card = document.createElement('div');
+          card.className = 'card presu-card';
+          const biPresu = getBaseImponiblePresu(presu);
+          const pagadoPresu = getPagadoMostradoPresupuesto(presu, presupuestos);
+          const restantePresu = Math.max(0, biPresu - pagadoPresu);
+          card.innerHTML = `
+            <div class="card-header">
+              <div>
+                <div class="card-title">${presu.titulo}</div>
+                <div class="card-subtitle">Ref: ${presu.referencia || '-'} · ${formatEuro(biPresu)} (B.I.)</div>
+                <div class="presu-resumen">
+                  <span class="presu-pagado">Pagado: ${formatEuro(pagadoPresu)}</span>
+                  <span class="presu-restante">Restante: ${formatEuro(restantePresu)}</span>
+                </div>
+              </div>
+              <span class="badge">${presu.partidas.filter(p=>p.terminada).length}/${presu.partidas.length}</span>
+            </div>
+          `;
+          presu.partidas.forEach(pa => {
+            const iva = parseFloat(pa.iva) || 0;
+            const totalConIva = iva > 0 ? pa.importe * (1 + iva / 100) : null;
+            const row = document.createElement('div');
+            row.className = 'partida' + (pa.terminada ? ' terminada' : '');
+            const ref = pa.referencia || pa.id || '';
+            row.innerHTML = `
+              <div class="partida-check" data-presu="${presu.id}" data-partida="${pa.id}" role="button" tabindex="0" aria-label="Marcar como ${pa.terminada ? 'pendiente' : 'terminada'}"></div>
+              <div class="partida-desc"><span class="partida-ref">${ref}</span> ${pa.descripcion}</div>
+              <div class="partida-importe-cell">
+                <span class="partida-importe">${formatEuro(pa.importe)}</span>
+                ${totalConIva ? `<span class="partida-total-iva">Total: ${formatEuro(totalConIva)}</span>` : ''}
+              </div>
+              <div class="partida-iva-cell">
+                <input type="number" class="partida-iva-input" placeholder="IVA %" min="0" max="100" step="0.01" value="${iva > 0 ? iva : ''}" data-presu="${presu.id}" data-partida="${pa.id}" title="IVA % para esta partida">
+              </div>
+            `;
+            row.querySelector('.partida-check').addEventListener('click', () => togglePartida(presu.id, pa.id));
+            row.querySelector('.partida-check').addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePartida(presu.id, pa.id); }
+            });
+            const ivaInput = row.querySelector('.partida-iva-input');
+            ivaInput.addEventListener('change', () => {
+              const v = ivaInput.value ? parseFloat(ivaInput.value) : 0;
+              updatePartidaIva(presu.id, pa.id, v);
+            });
+            card.appendChild(row);
+          });
+          const totalRow = document.createElement('div');
+          totalRow.className = 'partidas-total';
+          const totalConIvaPresu = presu.partidas.reduce((s, pa) => {
+            const iva = parseFloat(pa.iva) || 0;
+            return s + (iva > 0 ? pa.importe * (1 + iva / 100) : pa.importe);
+          }, 0);
+          const hayIva = presu.partidas.some(pa => (parseFloat(pa.iva) || 0) > 0);
+          const partidasRealizadas = presu.partidas.filter(pa => pa.terminada).reduce((s, pa) => s + (pa.importe || 0), 0);
+          const partes = ['Subtotal B.I.: ' + formatEuro(biPresu)];
+          if (partidasRealizadas > 0) partes.push('<span class="partidas-realizadas">Partidas realizadas: ' + formatEuro(partidasRealizadas) + '</span>');
+          if (hayIva) partes.push('Total con IVA: ' + formatEuro(totalConIvaPresu));
+          totalRow.innerHTML = partes.join(' · ');
+          card.appendChild(totalRow);
+          section.appendChild(card);
+        });
+        container.appendChild(section);
+      });
+    }
+
+    function updatePago(pagoId, updates) {
+      const pago = data.pagos.find(p => p.id === pagoId);
+      if (!pago) return;
+      if (updates.importe != null && !isNaN(updates.importe) && updates.importe >= 0) {
+        pago.importe = Math.round(updates.importe * 100) / 100;
+      }
+      if (updates.tipo) pago.tipo = updates.tipo;
+      if (updates.tipo === 'partida') {
+        pago.presuId = updates.presuId || null;
+        pago.partidaId = updates.partidaId || null;
+        pago.codigoProveedor = '';
+      } else {
+        pago.codigoProveedor = updates.codigoProveedor || '';
+        pago.presuId = null;
+        pago.partidaId = null;
+      }
+      if (updates.concepto !== undefined) pago.concepto = updates.concepto;
+      if (updates.fecha) pago.fecha = updates.fecha;
+      saveData(data);
+      render();
+    }
+
+    function showPagoEditForm(pago, itemEl) {
+      const isPartida = pago.tipo === 'partida' && pago.presuId && pago.partidaId;
+      const partidaVal = isPartida ? pago.presuId + '|' + pago.partidaId : '';
+      const formHtml = `
+        <div class="pago-edit-form">
+          <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="form-group">
+              <label>Importe (€)</label>
+              <input type="number" class="pago-edit-importe" step="0.01" min="0" value="${pago.importe}">
+            </div>
+            <div class="form-group">
+              <label>Fecha</label>
+              <input type="date" class="pago-edit-fecha" value="${pago.fecha}">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>Tipo</label>
+              <div class="pago-tipo-radio">
+                <label><input type="radio" name="edit_tipo_${pago.id}" value="partida" ${isPartida ? 'checked' : ''}> A partida</label>
+                <label><input type="radio" name="edit_tipo_${pago.id}" value="proveedor" ${!isPartida ? 'checked' : ''}> A cuenta proveedor</label>
+              </div>
+            </div>
+            <div class="form-group pago-edit-partida" style="grid-column: 1 / -1; display: ${isPartida ? 'block' : 'none'};">
+              <label>Partida</label>
+              <select class="pago-edit-partida-sel"><option value="">— Seleccionar —</option></select>
+            </div>
+            <div class="form-group pago-edit-proveedor" style="grid-column: 1 / -1; display: ${isPartida ? 'none' : 'block'};">
+              <label>Proveedor</label>
+              <select class="pago-edit-proveedor-sel"><option value="">— Seleccionar —</option></select>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>Concepto (opcional)</label>
+              <input type="text" class="pago-edit-concepto" value="${pago.concepto || ''}" placeholder="Notas...">
+            </div>
+            <div style="grid-column: 1 / -1; display: flex; gap: 0.5rem;">
+              <button type="button" class="btn btn-primary btn-pago-save">Guardar</button>
+              <button type="button" class="btn btn-secondary btn-pago-cancel">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      `;
+      itemEl.innerHTML = formHtml;
+      const partidaSel = itemEl.querySelector('.pago-edit-partida-sel');
+      const provSel = itemEl.querySelector('.pago-edit-proveedor-sel');
+      data.presupuestos.forEach(presu => {
+        const cod = presu.codigoProveedor || presu.proveedor?.slice(0, 4) || '';
+        presu.partidas.forEach(pa => {
+          const opt = document.createElement('option');
+          opt.value = presu.id + '|' + pa.id;
+          opt.textContent = `[${cod}] ${pa.referencia || pa.id} — ${pa.descripcion.slice(0, 45)}${pa.descripcion.length > 45 ? '…' : ''}`;
+          if (opt.value === partidaVal) opt.selected = true;
+          partidaSel.appendChild(opt);
+        });
+      });
+      const provs = new Map();
+      data.presupuestos.forEach(p => {
+        const c = p.codigoProveedor || p.proveedor?.slice(0, 4) || '';
+        if (!provs.has(c)) provs.set(c, p.proveedor);
+      });
+      provs.forEach((nombre, cod) => {
+        const opt = document.createElement('option');
+        opt.value = cod;
+        opt.textContent = `[${cod}] ${nombre}`;
+        if (cod === (pago.codigoProveedor || '')) opt.selected = true;
+        provSel.appendChild(opt);
+      });
+      itemEl.querySelectorAll(`input[name="edit_tipo_${pago.id}"]`).forEach(radio => {
+        radio.addEventListener('change', () => {
+          const toPartida = itemEl.querySelector(`input[name="edit_tipo_${pago.id}"]:checked`)?.value === 'partida';
+          itemEl.querySelector('.pago-edit-partida').style.display = toPartida ? 'block' : 'none';
+          itemEl.querySelector('.pago-edit-proveedor').style.display = toPartida ? 'none' : 'block';
+        });
+      });
+      itemEl.querySelector('.btn-pago-save').addEventListener('click', () => {
+        const tipo = itemEl.querySelector(`input[name="edit_tipo_${pago.id}"]:checked`)?.value || 'proveedor';
+        const importe = parseFloat(itemEl.querySelector('.pago-edit-importe').value) || 0;
+        const fecha = itemEl.querySelector('.pago-edit-fecha').value;
+        const concepto = itemEl.querySelector('.pago-edit-concepto').value.trim();
+        const updates = { importe, fecha, concepto, tipo };
+        if (tipo === 'partida') {
+          const v = partidaSel.value;
+          if (v) {
+            const [presuId, partidaId] = v.split('|');
+            updates.presuId = presuId;
+            updates.partidaId = partidaId;
+          }
+        } else {
+          updates.codigoProveedor = provSel.value || '';
+        }
+        updatePago(pago.id, updates);
+      });
+      itemEl.querySelector('.btn-pago-cancel').addEventListener('click', () => render());
+    }
+
+    function renderPagos() {
+      const container = document.getElementById('pagos-container');
+      if (!data.pagos.length) {
+        container.innerHTML = '<div class="empty-state"><p>Aún no hay pagos registrados.</p><p>Usa "Registrar pago" para añadir el primero.</p></div>';
+        return;
+      }
+      container.innerHTML = '';
+      data.pagos.slice().reverse().forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'pago-item';
+        const vinculo = (p.tipo === 'partida' && p.presuId && p.partidaId)
+          ? (() => {
+              const presu = data.presupuestos.find(x => x.id === p.presuId);
+              const pa = presu?.partidas.find(x => x.id === p.partidaId);
+              return pa ? `Partida ${pa.referencia || pa.id}: ${pa.descripcion.slice(0, 40)}${pa.descripcion.length > 40 ? '…' : ''}` : 'Partida';
+            })()
+          : (p.codigoProveedor ? `A cuenta [${p.codigoProveedor}]` : (p.concepto || 'A cuenta'));
+        item.innerHTML = `
+          <div class="pago-info">
+            <div class="pago-concepto">${vinculo}${(p.concepto && vinculo !== p.concepto) ? ' — ' + p.concepto : ''}</div>
+            <div class="pago-fecha">${formatDate(p.fecha)}</div>
+          </div>
+          <div class="pago-importe-editable">
+            <span class="pago-importe-display">${formatEuro(parseFloat(p.importe) || 0)}</span>
+            <button type="button" class="pago-edit" title="Editar pago">Editar</button>
+          </div>
+        `;
+        item.querySelector('.pago-edit').addEventListener('click', () => showPagoEditForm(p, item));
+        container.appendChild(item);
+      });
+    }
+
+    function renderPartidasEditor() {
+      const container = document.getElementById('partidas-editor-container');
+      const rows = container.querySelectorAll('.partida-editor-row');
+      if (!rows.length) addPartidaEditorRow();
+    }
+
+    function addPartidaEditorRow() {
+      const container = document.getElementById('partidas-editor-container');
+      const row = document.createElement('div');
+      row.className = 'partida-editor-row';
+      row.innerHTML = `
+        <div class="form-group">
+          <label>Ref.</label>
+          <input type="text" name="partida_ref[]" placeholder="P1-1" maxlength="12">
+        </div>
+        <div class="form-group">
+          <label>Descripción</label>
+          <input type="text" name="partida_desc[]" placeholder="Descripción de la partida">
+        </div>
+        <div class="form-group">
+          <label>Importe B.I. (€)</label>
+          <input type="number" name="partida_importe[]" step="0.01" min="0" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>IVA %</label>
+          <input type="number" name="partida_iva[]" min="0" max="100" step="0.01" placeholder="0">
+        </div>
+        <button type="button" class="btn-icon btn-remove-partida" title="Quitar">×</button>
+      `;
+      row.querySelector('.btn-remove-partida').addEventListener('click', () => row.remove());
+      container.appendChild(row);
+    }
+
+    function render() {
+      renderKPIs();
+      renderPartidas();
+      renderPagos();
+      populatePagoVinculos();
+    }
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('section-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Form: nuevo presupuesto
+    document.getElementById('btn-add-partida').addEventListener('click', addPartidaEditorRow);
+    document.getElementById('form-nuevo-presu').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const refs = form.querySelectorAll('input[name="partida_ref[]"]');
+      const descs = form.querySelectorAll('input[name="partida_desc[]"]');
+      const importes = form.querySelectorAll('input[name="partida_importe[]"]');
+      const ivas = form.querySelectorAll('input[name="partida_iva[]"]');
+      const partidas = [];
+      descs.forEach((d, i) => {
+        const desc = d.value.trim();
+        const ref = (refs[i]?.value || '').trim();
+        const imp = parseFloat(importes[i]?.value || 0);
+        const iva = parseFloat(ivas[i]?.value || 0);
+        if (desc) partidas.push({ id: uid(), referencia: ref || undefined, descripcion: desc, importe: imp, iva: iva > 0 ? iva : 0, terminada: false });
+      });
+      if (partidas.length === 0) {
+        alert('Añade al menos una partida con descripción.');
+        return;
+      }
+      const baseImponible = partidas.reduce((s, p) => s + p.importe, 0);
+      const presu = {
+        id: uid(),
+        codigoProveedor: (form.codigoProveedor?.value || '').trim() || undefined,
+        proveedor: form.proveedor.value.trim(),
+        titulo: form.titulo.value.trim(),
+        referencia: form.referencia.value.trim(),
+        fecha: form.fecha.value,
+        partidas,
+        baseImponible: Math.round(baseImponible * 100) / 100,
+        iva: 0
+      };
+      data.presupuestos.push(presu);
+      saveData(data);
+      form.reset();
+      document.getElementById('partidas-editor-container').innerHTML = '';
+      addPartidaEditorRow();
+      document.getElementById('fecha-presu').value = new Date().toISOString().slice(0, 10);
+      render();
+      document.querySelector('.tab[data-tab="partidas"]').click();
+    });
+
+    // Form: nuevo pago - toggle partida/proveedor
+    document.querySelectorAll('input[name="pago_tipo"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        const isPartida = document.querySelector('input[name="pago_tipo"]:checked')?.value === 'partida';
+        document.querySelector('.pago-vinculo-partida').style.display = isPartida ? 'block' : 'none';
+        document.querySelector('.pago-vinculo-proveedor').style.display = isPartida ? 'none' : 'block';
+        document.getElementById('partida-vinculo').required = isPartida;
+        document.getElementById('proveedor-vinculo').required = !isPartida;
+      });
+    });
+
+    function populatePagoVinculos() {
+      const partidaSel = document.getElementById('partida-vinculo');
+      const provSel = document.getElementById('proveedor-vinculo');
+      if (!partidaSel || !provSel) return;
+      partidaSel.innerHTML = '<option value="">— Seleccionar partida —</option>';
+      const provs = new Map();
+      data.presupuestos.forEach(presu => {
+        const cod = presu.codigoProveedor || presu.proveedor?.slice(0, 4) || '';
+        if (!provs.has(cod)) provs.set(cod, presu.proveedor);
+        presu.partidas.forEach(pa => {
+          const opt = document.createElement('option');
+          opt.value = presu.id + '|' + pa.id;
+          opt.textContent = `[${cod}] ${pa.referencia || pa.id} — ${pa.descripcion.slice(0, 50)}${pa.descripcion.length > 50 ? '…' : ''}`;
+          partidaSel.appendChild(opt);
+        });
+      });
+      provSel.innerHTML = '<option value="">— Seleccionar proveedor —</option>';
+      provs.forEach((nombre, cod) => {
+        const opt = document.createElement('option');
+        opt.value = cod;
+        opt.textContent = `[${cod}] ${nombre}`;
+        provSel.appendChild(opt);
+      });
+    }
+
+    // Form: nuevo pago submit
+    document.getElementById('form-nuevo-pago').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const tipo = form.pago_tipo.value;
+      const pago = {
+        id: uid(),
+        importe: parseFloat(form.importe.value),
+        fecha: form.fecha.value,
+        concepto: form.concepto.value.trim(),
+        tipo
+      };
+      if (tipo === 'partida') {
+        const v = form.partida_vinculo.value;
+        if (v) {
+          const [presuId, partidaId] = v.split('|');
+          pago.presuId = presuId;
+          pago.partidaId = partidaId;
+        }
+      } else {
+        pago.codigoProveedor = form.proveedor_vinculo.value || '';
+      }
+      data.pagos.push(pago);
+      saveData(data);
+      form.reset();
+      document.getElementById('fecha-pago').value = new Date().toISOString().slice(0, 10);
+      document.querySelector('input[name="pago_tipo"][value="partida"]').checked = true;
+      document.querySelector('.pago-vinculo-partida').style.display = 'block';
+      document.querySelector('.pago-vinculo-proveedor').style.display = 'none';
+      document.getElementById('partida-vinculo').required = true;
+      document.getElementById('proveedor-vinculo').required = false;
+      populatePagoVinculos();
+      render();
+      document.querySelector('.tab[data-tab="pagos"]').click();
+    });
+
+    // Exportar datos
+    document.getElementById('btn-exportar').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'reforma-yechar-data-' + new Date().toISOString().slice(0, 10) + '.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // Importar datos
+    document.getElementById('input-importar').addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const imported = JSON.parse(reader.result);
+          if (!imported.presupuestos || !Array.isArray(imported.presupuestos)) {
+            alert('El archivo no tiene el formato esperado (falta presupuestos).');
+            return;
+          }
+          data = {
+            obra: imported.obra || data.obra,
+            presupuestos: imported.presupuestos,
+            pagos: Array.isArray(imported.pagos) ? imported.pagos : []
+          };
+          migrateData(data);
+          saveData(data);
+          render();
+          alert('Datos restaurados correctamente.');
+        } catch (err) {
+          alert('Error al leer el archivo: ' + err.message);
+        }
+        e.target.value = '';
+      };
+      reader.readAsText(file);
+    });
+
+    // Init dates
+    document.getElementById('fecha-presu').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('fecha-pago').value = new Date().toISOString().slice(0, 10);
+
+    render();
+    renderPartidasEditor();
+  </script>
+</body>
+</html>
