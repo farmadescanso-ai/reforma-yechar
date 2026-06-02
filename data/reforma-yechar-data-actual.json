@@ -1110,62 +1110,71 @@
       "partidas": [
         {
           "id": "p8-1",
-          "descripcion": "Puerta de paso ciega lisa con herrajes negros (3 ud.)",
+          "referencia": "P8-1",
+          "descripcion": "Puerta de paso ciega lisa 4 rayas H pantografiadas con tapeta 9\", herraje negro y manivela roseta (3 ud.)",
           "importe": 1005,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-2",
-          "descripcion": "Puerta idem corredera con herrajes negros",
+          "referencia": "P8-2",
+          "descripcion": "Puerta idem corredera forrado especial jamba felpudo",
           "importe": 415,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-3",
-          "descripcion": "Armario empotrado modular 241×260 melamina blanca (2 ud.)",
+          "referencia": "P8-3",
+          "descripcion": "Armario empotrado modular a medida 241×260, interior antracita, 2 puertas correderas aluminio lacado blanco, melamina blanco titanio 19 mm (2 ud.)",
           "importe": 4390,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-4",
-          "descripcion": "Mobiliario de cocina modelo Zenit Supermatt Salvia anti-huellas",
+          "referencia": "P8-4",
+          "descripcion": "Mobiliario cocina modelo Zenit Supermatt Salvia melamina lacada seda mate antihuella + madera Exotic Klayton nudos, tirador perfil gola negro",
           "importe": 6795,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-5",
-          "descripcion": "Encimera porcelánico Calacatta Gold (incluida en cocina)",
-          "importe": 0,
+          "referencia": "P8-5",
+          "descripcion": "Encimera porcelánico Calacatta Gold 1,2 cm, frontal, hueco fregadero bajo encimera y colocación",
+          "importe": 2095,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-6",
-          "descripcion": "Módulo interior color antracita (incluido en cocina)",
+          "referencia": "P8-6",
+          "descripcion": "Módulo interior color antracita 16 Soft — bajos 78 cm + pata 12 cm (incluido en cocina)",
           "importe": 0,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-7",
-          "descripcion": "Bisagra Hettich Sensy con cierre suave (incluido en cocina)",
+          "referencia": "P8-7",
+          "descripcion": "Bisagra Hettich Sensy con regulaciones, freno y autocierre color antracita (incluido en cocina)",
           "importe": 0,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-8",
-          "descripcion": "Cajón y gavetas Hettich Innotech Atira (incluido en cocina)",
+          "referencia": "P8-8",
+          "descripcion": "Cajón y gavetas Hettich Innotech Atira con freno y autocierre (incluido en cocina)",
           "importe": 0,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-9",
+          "referencia": "P8-9",
           "descripcion": "Cubertero PVC (incluido en cocina)",
           "importe": 0,
           "iva": 21,
@@ -1173,44 +1182,49 @@
         },
         {
           "id": "p8-10",
-          "descripcion": "Despensero con 4 gavetas interiores (incluido en cocina)",
+          "referencia": "P8-10",
+          "descripcion": "Despensero con 4 gavetas interiores Hettich Innotech Atira con freno y autocierre (incluido en cocina)",
           "importe": 0,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-11",
-          "descripcion": "Herraje muebles elevables Blum (incluido en cocina)",
+          "referencia": "P8-11",
+          "descripcion": "Herraje muebles elevables Blum con regulaciones, freno y autocierre (incluido en cocina)",
           "importe": 0,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-12",
-          "descripcion": "Desayunador con iluminación LED (incluido en cocina)",
+          "referencia": "P8-12",
+          "descripcion": "Desayunador forma especial con iluminación LED (incluido en cocina)",
           "importe": 0,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-13",
-          "descripcion": "Vitrina modelo Luma perfil negro y cristal (incluido en cocina)",
+          "referencia": "P8-13",
+          "descripcion": "Vitrina modelo Luma perfil negro, cristal parsol negro, interior madera con baldas de cristal (incluido en cocina)",
           "importe": 0,
           "iva": 21,
           "terminada": false
         },
         {
           "id": "p8-14",
+          "referencia": "P8-14",
           "descripcion": "Iluminación LED parte baja muebles altos (incluido en cocina)",
           "importe": 0,
           "iva": 21,
           "terminada": false
         }
       ],
-      "baseImponible": 12605,
-      "total": 15252.05,
-      "iva": 2647.05,
-      "nota": "Cliente: Fran Lara, Casa padres Yéchar. Forma de pago: domiciliación."
+      "baseImponible": 14700,
+      "iva": 3087,
+      "total": 17787,
+      "nota": "Cliente: Fran Lara, Casa padres Yéchar. Forma de pago: domiciliación. Total presupuesto 17.787,00 €."
     }
   ],
   "pagos": [
