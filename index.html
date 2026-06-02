@@ -734,9 +734,48 @@
       color: var(--text-dim);
       margin-right: 0.25rem;
     }
+    .sync-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--accent-amber-dim);
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+    .sync-banner[hidden] { display: none !important; }
   </style>
 </head>
 <body>
+  <script>
+    (function () {
+      var VER = '2026-06-02-joyfa-v2';
+      var KEY = 'reforma-yechar-data-version';
+      if (localStorage.getItem(KEY) === VER) return;
+      var url = 'https://raw.githubusercontent.com/farmadescanso-ai/reforma-yechar/main/data/reforma-yechar-data-actual.json';
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, false);
+        xhr.send();
+        if (xhr.status === 200) {
+          var d = JSON.parse(xhr.responseText);
+          if (d && Array.isArray(d.presupuestos) && d.presupuestos.some(function (p) {
+            return (p.codigoProveedor || '') === 'JOYF' || (p.proveedor || '').toUpperCase().indexOf('JOYFA') >= 0;
+          })) {
+            localStorage.setItem('reforma-yechar-data', JSON.stringify(d));
+            localStorage.setItem(KEY, VER);
+          }
+        }
+      } catch (e) { /* sin conexión: se usa lo guardado o datos embebidos */ }
+    })();
+  </script>
+  <div id="sync-banner" class="sync-banner" hidden>
+    <span id="sync-banner-text">Faltan datos actualizados (p. ej. JOYFA MOBILIARIO).</span>
+    <button type="button" class="btn btn-primary btn-small" id="btn-actualizar-datos">Actualizar ahora</button>
+  </div>
   <div class="container">
     <header>
       <h1>Reforma Yéchar</h1>
@@ -859,6 +898,11 @@
           <div class="card-title">Guardar y restaurar datos</div>
           <div class="card-subtitle">Exporta o importa presupuestos, pagos y estado de partidas</div>
         </div>
+        <div class="card" style="margin-bottom: 1rem; border-color: var(--accent-terracotta); background: var(--accent-terracotta-dim);">
+          <p style="margin-bottom: 0.5rem; font-size: 0.9rem;">Si no ves el presupuesto <strong>JOYFA MOBILIARIO</strong> u otros datos recientes, pulsa el botón para cargar la copia oficial del panel.</p>
+          <button type="button" class="btn btn-primary" id="btn-actualizar-datos-2">Cargar datos actualizados del panel</button>
+          <p id="sync-status" style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-dim);"></p>
+        </div>
         <div class="form-grid datos-actions" style="grid-template-columns: 1fr 1fr; gap: 1rem;">
           <div>
             <p style="margin-bottom: 0.5rem; color: var(--text-dim); font-size: 0.9rem;">Descarga un archivo JSON con todos los datos (presupuestos, partidas terminadas, pagos). Guárdalo en un lugar seguro.</p>
@@ -948,6 +992,10 @@
     const STORAGE_KEY = 'reforma-yechar-data';
     const DATA_VERSION_KEY = 'reforma-yechar-data-version';
     const DATA_VERSION = '2026-06-02-joyfa-v2';
+    const CANONICAL_DATA_URLS = [
+      'data/reforma-yechar-data-actual.json?v=' + DATA_VERSION,
+      'https://raw.githubusercontent.com/farmadescanso-ai/reforma-yechar/main/data/reforma-yechar-data-actual.json'
+    ];
     const COLLAPSE_KEY = 'reforma-yechar-presu-collapse';
 
     function getCollapsedPresuSet() {
@@ -1046,6 +1094,52 @@
       return changed;
     }
 
+    function hasJoyfaPresupuesto(data) {
+      return (data.presupuestos || []).some(isJoyfaPresupuesto);
+    }
+
+    async function fetchCanonicalData() {
+      for (const url of CANONICAL_DATA_URLS) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const text = await res.text();
+          if (text.trim().startsWith('<')) continue;
+          const parsed = JSON.parse(text);
+          if (parsed && Array.isArray(parsed.presupuestos) && parsed.presupuestos.length) {
+            migrateData(parsed);
+            return parsed;
+          }
+        } catch (e) {
+          console.warn('No se pudo cargar', url, e);
+        }
+      }
+      return null;
+    }
+
+    function applyCanonicalToStored(canonical, embedded) {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      let data;
+      if (stored) {
+        try {
+          data = JSON.parse(stored);
+          migrateData(data);
+        } catch {
+          data = JSON.parse(JSON.stringify(canonical));
+        }
+      } else {
+        data = JSON.parse(JSON.stringify(canonical));
+      }
+      replaceJoyfaPresupuestosFromInitial(data, canonical);
+      mergeMissingPresupuestosFromInitial(data, canonical);
+      if (!hasJoyfaPresupuesto(data)) {
+        data = JSON.parse(JSON.stringify(canonical));
+      }
+      saveData(data);
+      localStorage.setItem(DATA_VERSION_KEY, DATA_VERSION);
+      return data;
+    }
+
     function loadData() {
       const initial = JSON.parse(document.getElementById('initial-data').textContent);
       migrateData(initial);
@@ -1056,7 +1150,7 @@
           const data = JSON.parse(stored);
           migrateData(data);
           let changed = false;
-          if (storedVersion !== DATA_VERSION) {
+          if (storedVersion !== DATA_VERSION || !hasJoyfaPresupuesto(data)) {
             replaceJoyfaPresupuestosFromInitial(data, initial);
             changed = true;
           }
@@ -1072,6 +1166,32 @@
       }
       localStorage.setItem(DATA_VERSION_KEY, DATA_VERSION);
       return initial;
+    }
+
+    async function syncCanonicalData(options) {
+      const { reload = true, statusEl } = options || {};
+      if (statusEl) statusEl.textContent = 'Descargando datos actualizados…';
+      const canonical = await fetchCanonicalData();
+      if (!canonical) {
+        if (statusEl) statusEl.textContent = 'No se pudo descargar. Comprueba la conexión e inténtalo de nuevo.';
+        return false;
+      }
+      const embedded = JSON.parse(document.getElementById('initial-data').textContent);
+      data = applyCanonicalToStored(canonical, embedded);
+      updateSyncBanner();
+      if (statusEl) statusEl.textContent = 'Datos actualizados correctamente (incluye JOYFA MOBILIARIO).';
+      render();
+      renderPartidasEditor();
+      populatePagoVinculos();
+      if (reload) setTimeout(() => location.reload(), 400);
+      return true;
+    }
+
+    function updateSyncBanner() {
+      const banner = document.getElementById('sync-banner');
+      if (!banner) return;
+      const ok = hasJoyfaPresupuesto(data);
+      banner.hidden = ok;
     }
 
     function saveData(data) {
@@ -1103,7 +1223,7 @@
       return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
     }
 
-    let data = loadData();
+    let data = { obra: { nombre: 'Reforma Yéchar' }, presupuestos: [], pagos: [] };
 
     function recalcPresupuestoTotals(presu) {
       const sum = presu.partidas.reduce((s, pa) => s + (parseFloat(pa.importe) || 0), 0);
@@ -2240,8 +2360,45 @@
     document.getElementById('btn-expandir-todos').addEventListener('click', expandAllPresupuestos);
     document.getElementById('btn-colapsar-todos').addEventListener('click', collapseAllPresupuestos);
 
-    render();
-    renderPartidasEditor();
+    function bindActualizarDatosButtons() {
+      const statusEl = document.getElementById('sync-status');
+      const handler = () => syncCanonicalData({ reload: true, statusEl });
+      document.getElementById('btn-actualizar-datos')?.addEventListener('click', handler);
+      document.getElementById('btn-actualizar-datos-2')?.addEventListener('click', handler);
+    }
+
+    (async function bootstrap() {
+      const embedded = JSON.parse(document.getElementById('initial-data').textContent);
+      migrateData(embedded);
+      const storedVer = localStorage.getItem(DATA_VERSION_KEY);
+      const storedRaw = localStorage.getItem(STORAGE_KEY);
+      let needsRemote = storedVer !== DATA_VERSION;
+      if (storedRaw) {
+        try {
+          if (!hasJoyfaPresupuesto(JSON.parse(storedRaw))) needsRemote = true;
+        } catch { needsRemote = true; }
+      } else {
+        needsRemote = !hasJoyfaPresupuesto(embedded);
+      }
+      if (needsRemote) {
+        const canonical = await fetchCanonicalData();
+        if (canonical) {
+          data = applyCanonicalToStored(canonical, embedded);
+        } else {
+          data = loadData();
+        }
+      } else {
+        data = loadData();
+      }
+      updateSyncBanner();
+      bindActualizarDatosButtons();
+      if (new URLSearchParams(location.search).get('actualizar') === '1') {
+        await syncCanonicalData({ reload: true });
+        return;
+      }
+      render();
+      renderPartidasEditor();
+    })();
   </script>
 </body>
 </html>
